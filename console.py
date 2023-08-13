@@ -12,8 +12,8 @@ from models import storage
 import re
 
 
-class HBNHCommand(cmd.Cmd):
-    """Command interpreter implementarion
+class HBNBCommand(cmd.Cmd):
+    """Command interpreter implementarion.
 
     Attributs:
         prompt (str): The prompt issued to solicit input.
@@ -25,19 +25,20 @@ class HBNHCommand(cmd.Cmd):
                   'City', 'Amenity', 'Review']
 
     def do_quit(self, line):
-        "Quit command to exit the program"
+        "Quit command to exit the program."
         return True
 
     def do_EOF(self, line):
-        "EOF (Ctrl + D) command to exit the program"
+        "EOF (Ctrl + D) command to exit the program."
+        print()
         return True
 
     def emptyline(self):
-        "emptyline command to ignore 'ENTER' key"
+        "emptyline command to ignore 'ENTER' key."
         pass
 
     def valid_input(self, line, has_id=False, has_attr=False):
-        """Validates the input given by the user
+        """Validates the input given by the user.
 
         Args:
             line (str): The user input.
@@ -52,7 +53,7 @@ class HBNHCommand(cmd.Cmd):
         if lenght == 0:
             print("** class name missing **")
             return False
-        elif args[0] not in HBNHCommand.classnames:
+        elif args[0] not in HBNBCommand.classnames:
             print("** class doesn't exist **")
             return False
         elif has_id and lenght == 1:
@@ -70,7 +71,7 @@ class HBNHCommand(cmd.Cmd):
         return True
 
     def do_create(self, line):
-        "Creates a new instance of the given class"
+        "Creates a new instance of the given class.\n"
         classes = {'BaseModel': BaseModel,
                    'User': User,
                    'Place': Place,
@@ -84,21 +85,21 @@ class HBNHCommand(cmd.Cmd):
             print(obj.id)
 
     def do_show(self, line):
-        "Prints info of an instance based on the class name and id"
+        "Prints info of an instance based on the class name and id."
         if self.valid_input(line, True):
             key = line.split()[0] + '.' + line.split()[1]
             print(storage.all()[key])
 
     def do_destroy(self, line):
-        "Deletes an instance based on the class name and id"
+        "Deletes an instance based on the class name and id."
         if self.valid_input(line, True):
             key = line.split()[0] + '.' + line.split()[1]
             del storage.all()[key]
             storage.save()
 
     def do_all(self, line):
-        "Prints all infos of all instances based or not on the class name"
-        if len(line.split()) == 1 and line not in HBNHCommand.classnames:
+        "Prints all infos of all instances based or not on the class name."
+        if len(line.split()) == 1 and line not in HBNBCommand.classnames:
             print("** class doesn't exist **")
             return
         objects = storage.all()
@@ -110,7 +111,7 @@ class HBNHCommand(cmd.Cmd):
             print(list_objs)
 
     def do_update(self, line):
-        "Updates an instance based on the class name and id"
+        "Updates an instance based on the class name and id."
         args = line.split()
         if self.valid_input(line, True, True):
             key = args[0] + '.' + args[1]
@@ -124,7 +125,7 @@ class HBNHCommand(cmd.Cmd):
             storage.save()
 
     def default(self, line):
-        "Handels the special commands"
+        "Handels the special commands."
         cmds = {'all': self.do_all,
                 'count': self.count,
                 'show': self.do_show,
@@ -133,25 +134,24 @@ class HBNHCommand(cmd.Cmd):
         try:
             match = re.findall(r'(\w+)\.(\w+)\((.*)\)', line)[0]
         except IndexError:
-            print("*** Unknown syntax: ", line)
             return
         class_name = match[0]
         cmd_name = match[1]
         _id = match[2]
-        print(f"class: {class_name}\ncmd: {cmd_name}\nid: {_id}")
         args = class_name
         if _id:
             args += ' ' + _id.replace(',', '')
         cmds[cmd_name](args)
 
     def count(self, line):
-        "Retrieve the number of instances of a class"
-        count = 0
-        for k in storage.all():
-            if line.split()[0] in k:
-                count += 1
-        print(count)
+        "Retrieve the number of instances of a class."
+        if self.valid_input(line):
+            count = 0
+            for k in storage.all():
+                if line.split()[0] in k:
+                    count += 1
+            print(count)
 
 
 if __name__ == '__main__':
-    HBNHCommand().cmdloop()
+    HBNBCommand().cmdloop()

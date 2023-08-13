@@ -40,25 +40,19 @@ class FileStorage:
         from ..city import City
         from ..amenity import Amenity
         from ..review import Review
+
+        classes = {'BaseModel': BaseModel,
+                   'User': User,
+                   'Place': Place,
+                   'State': State,
+                   'City': City,
+                   'Amenity': Amenity,
+                   'Review': Review}
         try:
             with open(FileStorage.__file_path, 'r') as file:
                 new_dict = json.load(file)
                 for k, v in new_dict.items():
-                    if v['__class__'] == 'BaseModel':
-                        obj = BaseModel(**v)
-                    elif v['__class__'] == 'User':
-                        obj = User(**v)
-                    elif v['__class__'] == 'Place':
-                        obj = Place(**v)
-                    elif v['__class__'] == 'State':
-                        obj = State(**v)
-                    elif v['__class__'] == 'City':
-                        obj = City(**v)
-                    elif v['__class__'] == 'Amenity':
-                        obj = Amenity(**v)
-                    elif v['__class__'] == 'Review':
-                        obj = Review(**v)
-
+                    obj = classes[v['__class__']](**v)
                     FileStorage.__objects[k] = obj
         except FileNotFoundError:
             pass
