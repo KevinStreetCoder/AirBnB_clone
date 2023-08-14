@@ -20,7 +20,7 @@ class HBNBCommand(cmd.Cmd):
         prompt (str): The prompt issued to solicit input.
         classnames (list): List containing class names.
     """
-    prompt = '(hbnh) '
+    prompt = '(hbnb) '
 
     classnames = ['BaseModel', 'User', 'Place', 'State',
                   'City', 'Amenity', 'Review']
@@ -117,7 +117,6 @@ class HBNBCommand(cmd.Cmd):
         if self.valid_input(line, True, True):
             key = args[0] + '.' + args[1]
             obj = storage.all()[key]
-            print(line)
             setattr(obj, str(args[2]), self.type_caste(args[3],
                     type_flag)(args[3]))
             storage.save()
