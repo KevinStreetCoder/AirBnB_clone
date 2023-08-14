@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 import os
 
+
 class TestFileStorage(unittest.TestCase):
     """ Test cases for FileStorage class """
 
@@ -79,6 +80,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(model.updated_at, loaded_model.updated_at)
         self.assertEqual(model.name, loaded_model.name)
         self.assertEqual(model.to_dict(), loaded_model.to_dict())
+
 
 if __name__ == "__main__":
     unittest.main()
