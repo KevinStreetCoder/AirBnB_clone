@@ -10,6 +10,7 @@ from models.amenity import Amenity
 from models.review import Review
 from models import storage
 import re
+import json
 
 
 class HBNBCommand(cmd.Cmd):
@@ -110,18 +111,15 @@ class HBNBCommand(cmd.Cmd):
         if list_objs:
             print(list_objs)
 
-    def do_update(self, line):
+    def do_update(self, line, type_flag=None):
         "Updates an instance based on the class name and id."
         args = line.split()
         if self.valid_input(line, True, True):
             key = args[0] + '.' + args[1]
             obj = storage.all()[key]
-            if args[3][0] in "\"'" and args[3][-1] in "\"'":
-                setattr(obj, args[2], args[3][1:-1])
-            elif bool(re.search(r"[0-9]+\.[0-9]", args[3])):
-                setattr(obj, args[2], float(args[3]))
-            else:
-                setattr(obj, args[2], int(args[3]))
+            print(line)
+            setattr(obj, str(args[2]), self.type_caste(args[3],
+                    type_flag)(args[3]))
             storage.save()
 
     def default(self, line):
@@ -131,17 +129,32 @@ class HBNBCommand(cmd.Cmd):
                 'show': self.do_show,
                 'destroy': self.do_destroy,
                 'update': self.do_update}
+        info = dict()
         try:
             match = re.findall(r'(\w+)\.(\w+)\((.*)\)', line)[0]
+            info['id'] = ' ' + re.search(r'"([^"]*)"', match[2]).group(1)
         except IndexError:
             return
-        class_name = match[0]
-        cmd_name = match[1]
-        _id = match[2]
-        args = class_name
-        if _id:
-            args += ' ' + _id.replace(',', '')
-        cmds[cmd_name](args)
+        except AttributeError:
+            info['id'] = ''
+
+        info['class'] = match[0]
+        info['cmd'] = match[1]
+
+        if info['cmd'] == 'update':
+            if '{' in match[2] and match[2].endswith('}'):
+                attrs = line[line.index('{'):line.index('}') + 1]
+                attrs = json.loads(attrs.replace("'", '"'))
+                info['attrs'] = attrs
+            else:
+                res = match[2].split(',')
+                info['attrs'] = {res[1]: res[2]}
+            for k, v in info['attrs'].items():
+                k = k.replace("'", "").replace('"', '')
+                cmds[info['cmd']](info['class'] + info['id'] +
+                                  ' ' + k + ' ' + str(v), type(v))
+        else:
+            cmds[info['cmd']](info['class'] + info['id'])
 
     def count(self, line):
         "Retrieve the number of instances of a class."
@@ -151,6 +164,16 @@ class HBNBCommand(cmd.Cmd):
                 if line.split()[0] in k:
                     count += 1
             print(count)
+
+    def type_caste(self, value, flag):
+        if flag:
+            return flag
+        elif value.replace('.', '', 1).isdigit():
+            return float
+        elif value.isdigit():
+            return int
+        else:
+            return str
 
 
 if __name__ == '__main__':
