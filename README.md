@@ -267,13 +267,13 @@ e952b772-80a5-41e9-b728-6bc4dc5c21b4
     <summary>Kevin Isaac Kareithi</summary>
     <ul>
     <li><a href="https://www.github.com/KevinStreetCode">Github</a></li>
-    <li><a href="kevinisaackareithi@gmail.com">e-mail</a></li>
+    <li>E-mail: kevinisaackareithi@gmail.com</li>
     </ul>
 </details>
 <details>
     <summary>Omar Ouaziz (zaynOm)</summary>
     <ul>
     <li><a href="https://www.github.com/zaynOm">Github</a></li>
-    <li><a href="ouaziz0626@gmail.com">e-mail</a></li>
+    <li>E-mail: ouaziz0626@gmail.com</li>
     </ul>
 </details>
